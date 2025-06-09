@@ -46,7 +46,15 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    const Icon(Icons.school, color: Colors.white, size: 28),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: Image.asset(
+                        'lib/assets/image/academate_logo.jpeg',
+                        height: 36,
+                        width: 36,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       'Academate',
@@ -107,7 +115,6 @@ class DashboardScreen extends StatelessWidget {
               ],
             ),
           ),
-
           Expanded(
             child: SafeArea(
               child: SingleChildScrollView(
@@ -161,7 +168,6 @@ class DashboardScreen extends StatelessWidget {
                       width: cardWidth,
                       onTap: () {},
                     ),
-                    const SizedBox(height: 16),
                   ],
                 ),
               ),

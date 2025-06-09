@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../screen/my_faculty_screen.dart'; // <-- Add this import
+import '../screen/my_faculty_screen.dart';
+import '../screen/student.dart';
+import '../screen/mentor_assign.dart';
+import '../screen/mentor_mentee_list_page.dart';
+import '../screen/pending_leaves_approved.dart';
+import '../screen/approval_leave.dart';
+import '../screen/assign_course_screen.dart'; // ✅ NEW import for AssignCourseScreen
 
 class CustomSidebar extends StatefulWidget {
   const CustomSidebar({super.key});
@@ -53,8 +59,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
     );
   }
 
-  Widget navItem(String title, IconData icon, VoidCallback onTap,
-      {bool isSelected = false}) {
+  Widget navItem(String title, IconData icon, VoidCallback onTap, {bool isSelected = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Material(
@@ -97,8 +102,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
         AnimatedCrossFade(
           firstChild: const SizedBox.shrink(),
           secondChild: Column(children: children),
-          crossFadeState:
-          isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+          crossFadeState: isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
           duration: const Duration(milliseconds: 250),
         ),
       ],
@@ -129,23 +133,32 @@ class _CustomSidebarState extends State<CustomSidebar> {
                 children: [
                   buildSection('My Department', [
                     navItem('My Faculty', Icons.people_outline, () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const MyFacultyScreen()),
-                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const MyFacultyScreen()));
                     }),
-                    navItem('My Students', Icons.school_outlined, () {}),
-                    navItem('Mentor Assign', Icons.assignment_ind_outlined, () {}),
-                    navItem('Mentor Mentee List', Icons.list_alt_outlined, () {}),
+                    navItem('My Students', Icons.school_outlined, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const StudentScreen()));
+                    }),
+                    navItem('Mentor Assign', Icons.assignment_ind_outlined, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const MentorAssignScreen()));
+                    }),
+                    navItem('Mentor Mentee List', Icons.list_alt_outlined, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const MentorMenteeListPage()));
+                    }),
                   ]),
                   buildSection('Course Management', [
-                    navItem('Assign Course', Icons.bookmark_border, () {}),
+                    navItem('Assign Course', Icons.bookmark_border, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const AssignCourseScreen())); // ✅ Now linked
+                    }),
                     navItem('Course Assignments', Icons.assignment_outlined, () {}),
                     navItem('Program Outcomes', Icons.checklist_outlined, () {}),
                   ]),
                   buildSection('Leaves', [
-                    navItem('Approved Leaves', Icons.thumb_up_alt_outlined, () {}),
-                    navItem('Pending Leave Approvals', Icons.pending_actions, () {}),
+                    navItem('Approved Leaves', Icons.thumb_up_alt_outlined, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const ApprovalLeavePage()));
+                    }),
+                    navItem('Pending Leave Approvals', Icons.pending_actions, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const PendingLeaveApprovalsPage()));
+                    }),
                   ]),
                   buildSection('No Dues', [
                     navItem('UnSigned No Dues', Icons.remove_circle_outline, () {}),
@@ -169,7 +182,9 @@ class _CustomSidebarState extends State<CustomSidebar> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  // TODO: Add logout logic
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFD32F2F),
                   minimumSize: const Size(double.infinity, 48),

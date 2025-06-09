@@ -1,7 +1,7 @@
 name: rushi
 description: A new Flutter project.
+publish_to: 'none' # Prevent accidental publishing
 
-publish_to: 'none' # Prevents accidental publishing
 version: 1.0.0+1
 
 environment:
@@ -13,13 +13,15 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_fonts: ^6.1.0
   table_calendar: ^3.0.8
-  fl_chart: ^0.66.2        # Charting library
-  animate_do: ^3.0.2       # Animation library
+  fl_chart: ^0.66.2
+  animate_do: ^3.0.2
   pdf: ^3.10.4
   printing: ^5.12.0
   excel: ^2.1.0
   path_provider: ^2.1.1
   permission_handler: ^11.0.1
+  url_launcher: ^6.2.5
+  font_awesome_flutter: ^10.7.0
 
 dev_dependencies:
   flutter_test:
@@ -28,3 +30,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+     - lib/assets/image/academate_logo.jpeg
