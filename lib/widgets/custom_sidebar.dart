@@ -9,8 +9,10 @@ import '../screen/pending_leaves_approved.dart';
 import '../screen/approval_leave.dart';
 import '../screen/assign_course_screen.dart';
 import '../screen/program_outcome.dart';
-import '../screen/course_assignment_screen.dart'; // Import for CourseAssignmentScreen
-import '../screen/faculty.dart'; // Import for FacultyWiseReportsScreen
+import '../screen/course_assignment_screen.dart';
+import '../screen/faculty.dart';
+import '../screen/semesterwisereport.dart';
+import '../screen/coursewisereportscreen.dart'; // ✅ Added this line
 
 class CustomSidebar extends StatefulWidget {
   const CustomSidebar({super.key});
@@ -183,8 +185,12 @@ class _CustomSidebarState extends State<CustomSidebar> {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => const FacultyWiseReportsScreen()));
                     }),
                     navItem('Course Outcome Wise Reports', Icons.timeline_outlined, () {}),
-                    navItem('Course Wise Reports', Icons.insert_chart_outlined, () {}),
-                    navItem('Semester Wise Reports', Icons.date_range_outlined, () {}),
+                    navItem('Course Wise Reports', Icons.insert_chart_outlined, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const CourseWiseReportsScreen())); // ✅ Linked here
+                    }),
+                    navItem('Semester Wise Reports', Icons.date_range_outlined, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const SemesterWiseReportScreen()));
+                    }),
                     navItem('Set Target Reports', Icons.flag_outlined, () {}),
                   ]),
                   buildSection('Budget Request', [
