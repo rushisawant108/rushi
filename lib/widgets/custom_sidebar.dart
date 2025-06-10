@@ -7,7 +7,10 @@ import '../screen/mentor_assign.dart';
 import '../screen/mentor_mentee_list_page.dart';
 import '../screen/pending_leaves_approved.dart';
 import '../screen/approval_leave.dart';
-import '../screen/assign_course_screen.dart'; // ✅ NEW import for AssignCourseScreen
+import '../screen/assign_course_screen.dart';
+import '../screen/program_outcome.dart';
+import '../screen/course_assignment_screen.dart'; // Import for CourseAssignmentScreen
+import '../screen/faculty.dart'; // Import for FacultyWiseReportsScreen
 
 class CustomSidebar extends StatefulWidget {
   const CustomSidebar({super.key});
@@ -30,7 +33,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
       },
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         margin: const EdgeInsets.only(top: 16),
         decoration: BoxDecoration(
           color: const Color(0xFF1A2639),
@@ -43,15 +46,17 @@ class _CustomSidebarState extends State<CustomSidebar> {
                 title,
                 style: GoogleFonts.poppins(
                   color: Colors.white70,
-                  fontSize: 13.5,
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
                 ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
             AnimatedRotation(
               turns: isExpanded ? 0.5 : 0,
               duration: const Duration(milliseconds: 200),
-              child: const Icon(Icons.keyboard_arrow_down, color: Colors.white54, size: 20),
+              child: const Icon(Icons.keyboard_arrow_down, color: Colors.white54, size: 18),
             ),
           ],
         ),
@@ -69,19 +74,23 @@ class _CustomSidebarState extends State<CustomSidebar> {
           borderRadius: BorderRadius.circular(8),
           onTap: onTap,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             child: Row(
               children: [
-                Icon(icon, color: Colors.white70, size: 20),
-                const SizedBox(width: 12),
-                Text(
-                  title,
-                  style: GoogleFonts.inter(
-                    textStyle: TextStyle(
-                      color: Colors.white,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      fontSize: 14.5,
+                Icon(icon, color: Colors.white70, size: 18),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: GoogleFonts.inter(
+                      textStyle: TextStyle(
+                        color: Colors.white,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontSize: 13.5,
+                      ),
                     ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
               ],
@@ -129,7 +138,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
             const Divider(color: Colors.white24, height: 1, thickness: 0.5),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 children: [
                   buildSection('My Department', [
                     navItem('My Faculty', Icons.people_outline, () {
@@ -147,10 +156,14 @@ class _CustomSidebarState extends State<CustomSidebar> {
                   ]),
                   buildSection('Course Management', [
                     navItem('Assign Course', Icons.bookmark_border, () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const AssignCourseScreen())); // ✅ Now linked
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const AssignCourseScreen()));
                     }),
-                    navItem('Course Assignments', Icons.assignment_outlined, () {}),
-                    navItem('Program Outcomes', Icons.checklist_outlined, () {}),
+                    navItem('Course Assignments', Icons.assignment_outlined, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const CourseAssignmentScreen()));
+                    }),
+                    navItem('Program Outcomes', Icons.checklist_outlined, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const ProgramOutcomeScreen()));
+                    }),
                   ]),
                   buildSection('Leaves', [
                     navItem('Approved Leaves', Icons.thumb_up_alt_outlined, () {
@@ -166,7 +179,9 @@ class _CustomSidebarState extends State<CustomSidebar> {
                     navItem('Signed No Dues', Icons.verified_outlined, () {}),
                   ]),
                   buildSection('Reports', [
-                    navItem('Faculty Wise Reports', Icons.bar_chart, () {}),
+                    navItem('Faculty Wise Reports', Icons.bar_chart, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const FacultyWiseReportsScreen()));
+                    }),
                     navItem('Course Outcome Wise Reports', Icons.timeline_outlined, () {}),
                     navItem('Course Wise Reports', Icons.insert_chart_outlined, () {}),
                     navItem('Semester Wise Reports', Icons.date_range_outlined, () {}),

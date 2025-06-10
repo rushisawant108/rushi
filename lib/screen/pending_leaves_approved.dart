@@ -10,7 +10,7 @@ class LeaveRequest {
   final String reason;
   final String fromDate;
   final String toDate;
-  final String status;
+  String status; // Changed to non-final to allow updates
   final String approvedBy;
 
   LeaveRequest({
@@ -143,7 +143,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16)),
           title: Row(
             children: [
               Icon(
@@ -164,7 +165,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
           content: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Text(
-              "No faculty found matching '${_searchController.text}'. Please check the name and try again.",
+              "No faculty found matching '${_searchController
+                  .text}'. Please check the name and try again.",
               style: GoogleFonts.poppins(fontSize: 14),
             ),
           ),
@@ -175,7 +177,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                 _clearSearch();
               },
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 24, vertical: 12),
               ),
               child: Text(
                 "Clear Search",
@@ -188,7 +191,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
             TextButton(
               onPressed: () => Navigator.pop(context),
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 24, vertical: 12),
               ),
               child: Text(
                 "OK",
@@ -206,51 +210,69 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
 
   void handleApproval(int index, bool isApproved) {
     final name = filteredRequests[index].name;
+
+    // Update the status in the original requests list
+    final originalIndex = requests.indexWhere((req) =>
+    req.collegeId == filteredRequests[index].collegeId &&
+        req.name == filteredRequests[index].name);
+
+    setState(() {
+      if (originalIndex != -1) {
+        requests[originalIndex].status = isApproved ? "Approved" : "Denied";
+      }
+      filteredRequests[index].status = isApproved ? "Approved" : "Denied";
+    });
+
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            Icon(
-              isApproved ? Icons.check_circle : Icons.cancel,
-              color: isApproved ? Colors.green : Colors.red,
-              size: 28,
+      builder: (_) =>
+          AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16)),
+            title: Row(
+              children: [
+                Icon(
+                  isApproved ? Icons.check_circle : Icons.cancel,
+                  color: isApproved ? Colors.green : Colors.red,
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  isApproved ? "Request Approved" : "Request Denied",
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Text(
-              isApproved ? "Request Approved" : "Request Denied",
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+            content: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                "Leave request for $name has been ${isApproved
+                    ? 'approved'
+                    : 'denied'} successfully.",
+                style: GoogleFonts.poppins(fontSize: 14),
               ),
             ),
-          ],
-        ),
-        content: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Text(
-            "Leave request for $name has been ${isApproved ? 'approved' : 'denied'} successfully.",
-            style: GoogleFonts.poppins(fontSize: 14),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            ),
-            child: Text(
-              "OK",
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF2A1070),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24, vertical: 12),
+                ),
+                child: Text(
+                  "OK",
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF2A1070),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -330,19 +352,39 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.orange.shade100,
+                        color: req.status == "Pending"
+                            ? Colors.orange.shade100
+                            : req.status == "Approved"
+                            ? Colors.green.shade100
+                            : Colors.red.shade100,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.orange.shade300, width: 1),
+                        border: Border.all(
+                          color: req.status == "Pending"
+                              ? Colors.orange.shade300
+                              : req.status == "Approved"
+                              ? Colors.green.shade300
+                              : Colors.red.shade300,
+                          width: 1,
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            Icons.access_time,
+                            req.status == "Pending"
+                                ? Icons.access_time
+                                : req.status == "Approved"
+                                ? Icons.check_circle
+                                : Icons.cancel,
                             size: 14,
-                            color: Colors.orange.shade700,
+                            color: req.status == "Pending"
+                                ? Colors.orange.shade700
+                                : req.status == "Approved"
+                                ? Colors.green.shade700
+                                : Colors.red.shade700,
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -350,7 +392,11 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                             style: GoogleFonts.poppins(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: Colors.orange.shade700,
+                              color: req.status == "Pending"
+                                  ? Colors.orange.shade700
+                                  : req.status == "Approved"
+                                  ? Colors.green.shade700
+                                  : Colors.red.shade700,
                             ),
                           ),
                         ],
@@ -376,22 +422,33 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                         children: [
                           Row(
                             children: [
-                              Expanded(child: _buildInfoTile(Icons.category_outlined, "Leave Type", req.leaveType)),
-                              Expanded(child: _buildInfoTile(Icons.business_outlined, "Department", req.department)),
+                              Expanded(child: _buildInfoTile(
+                                  Icons.category_outlined, "Leave Type",
+                                  req.leaveType)),
+                              Expanded(child: _buildInfoTile(
+                                  Icons.business_outlined, "Department",
+                                  req.department)),
                             ],
                           ),
                           const SizedBox(height: 12),
                           Row(
                             children: [
-                              Expanded(child: _buildInfoTile(Icons.access_time, "Duration", "${req.days} day${req.days > 1 ? 's' : ''}")),
-                              Expanded(child: _buildInfoTile(Icons.description_outlined, "Reason", req.reason)),
+                              Expanded(child: _buildInfoTile(
+                                  Icons.access_time, "Duration",
+                                  "${req.days} day${req.days > 1 ? 's' : ''}")),
+                              Expanded(child: _buildInfoTile(
+                                  Icons.description_outlined, "Reason",
+                                  req.reason)),
                             ],
                           ),
                           const SizedBox(height: 12),
                           Row(
                             children: [
-                              Expanded(child: _buildInfoTile(Icons.date_range_outlined, "From", req.fromDate)),
-                              Expanded(child: _buildInfoTile(Icons.date_range_outlined, "To", req.toDate)),
+                              Expanded(child: _buildInfoTile(
+                                  Icons.date_range_outlined, "From",
+                                  req.fromDate)),
+                              Expanded(child: _buildInfoTile(
+                                  Icons.date_range_outlined, "To", req.toDate)),
                             ],
                           ),
                         ],
@@ -409,7 +466,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.person_outline, size: 16, color: Colors.blue.shade700),
+                          Icon(Icons.person_outline, size: 16, color: Colors
+                              .blue.shade700),
                           const SizedBox(width: 6),
                           Text(
                             "Reporting to: ",
@@ -435,44 +493,93 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
 
                     const SizedBox(height: 16),
 
-                    // Action Buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () => handleApproval(index, false),
-                            icon: const Icon(Icons.close, size: 16),
-                            label: const Text("Deny"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red.shade600,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                    // Action Buttons or Status Message
+                    if (req.status == "Pending") ...[
+                      // Show action buttons only if status is pending
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () => handleApproval(index, false),
+                              icon: const Icon(Icons.close, size: 16),
+                              label: const Text("Deny"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red.shade600,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                elevation: 0,
                               ),
-                              elevation: 0,
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () => handleApproval(index, true),
-                            icon: const Icon(Icons.check, size: 16),
-                            label: const Text("Approve"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green.shade600,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () => handleApproval(index, true),
+                              icon: const Icon(Icons.check, size: 16),
+                              label: const Text("Approve"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green.shade600,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                elevation: 0,
                               ),
-                              elevation: 0,
                             ),
+                          ),
+                        ],
+                      ),
+                    ] else
+                      ...[
+                        // Show status message if already processed
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 16, horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: req.status == "Approved"
+                                ? Colors.green.shade50
+                                : Colors.red.shade50,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: req.status == "Approved"
+                                  ? Colors.green.shade200
+                                  : Colors.red.shade200,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                req.status == "Approved"
+                                    ? Icons.check_circle
+                                    : Icons.cancel,
+                                color: req.status == "Approved"
+                                    ? Colors.green.shade700
+                                    : Colors.red.shade700,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Request ${req.status}",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: req.status == "Approved"
+                                      ? Colors.green.shade700
+                                      : Colors.red.shade700,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
-                    ),
                   ],
                 ),
               ),
@@ -597,7 +704,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        "${requests.length} pending approval${requests.length != 1 ? 's' : ''}",
+                        "${requests.length} pending approval${requests.length !=
+                            1 ? 's' : ''}",
                         style: GoogleFonts.poppins(
                           fontSize: 13,
                           color: Colors.white.withOpacity(0.8),
@@ -607,7 +715,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(16),
@@ -638,7 +747,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                         color: isSearchActive
-                            ? (showInvalidMessage ? Colors.red : const Color(0xFF2A1070))
+                            ? (showInvalidMessage ? Colors.red : const Color(
+                            0xFF2A1070))
                             : Colors.grey.shade300
                     ),
                     boxShadow: [
@@ -654,7 +764,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                       Icon(
                           Icons.search,
                           color: isSearchActive
-                              ? (showInvalidMessage ? Colors.red : const Color(0xFF2A1070))
+                              ? (showInvalidMessage ? Colors.red : const Color(
+                              0xFF2A1070))
                               : Colors.grey[500],
                           size: 20
                       ),
@@ -669,7 +780,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                               color: Colors.grey[500],
                             ),
                             border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 14),
                           ),
                           style: GoogleFonts.poppins(fontSize: 14),
                         ),
@@ -677,7 +789,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                       if (isSearchActive) ...[
                         IconButton(
                           onPressed: _clearSearch,
-                          icon: Icon(Icons.clear, color: Colors.grey[600], size: 18),
+                          icon: Icon(Icons.clear, color: Colors.grey[600],
+                              size: 18),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
                         ),
@@ -692,7 +805,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                               color: Colors.red.shade100,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Icon(Icons.error, color: Colors.red, size: 18),
+                            child: Icon(Icons.error, color: Colors.red,
+                                size: 18),
                           ),
                         )
                       else
@@ -702,7 +816,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                             color: Colors.grey.shade100,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Icon(Icons.tune, color: Colors.grey[600], size: 18),
+                          child: Icon(
+                              Icons.tune, color: Colors.grey[600], size: 18),
                         ),
                     ],
                   ),
@@ -726,7 +841,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                       if (isSearchActive && !showInvalidMessage) ...[
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: const Color(0xFF2A1070).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
@@ -777,7 +893,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "No faculty found matching '${_searchController.text}'",
+                          "No faculty found matching '${_searchController
+                              .text}'",
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             color: Colors.grey[600],
@@ -792,7 +909,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red.shade600,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -841,7 +959,8 @@ class _PendingLeaveApprovalsPageState extends State<PendingLeaveApprovalsPage>
                       : ListView.builder(
                     padding: const EdgeInsets.only(bottom: 20),
                     itemCount: filteredRequests.length,
-                    itemBuilder: (context, index) => buildCard(filteredRequests[index], index),
+                    itemBuilder: (context, index) =>
+                        buildCard(filteredRequests[index], index),
                   ),
                 ),
               ],
