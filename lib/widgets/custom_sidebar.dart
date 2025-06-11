@@ -12,7 +12,9 @@ import '../screen/program_outcome.dart';
 import '../screen/course_assignment_screen.dart';
 import '../screen/faculty.dart';
 import '../screen/semesterwisereport.dart';
-import '../screen/coursewisereportscreen.dart'; // ✅ Added this line
+import '../screen/coursewisereportscreen.dart';
+import '../screen/courseoutcomewisereports.dart';
+import '../screen/settargetreports.dart'; // ✅ Added this import
 
 class CustomSidebar extends StatefulWidget {
   const CustomSidebar({super.key});
@@ -184,14 +186,18 @@ class _CustomSidebarState extends State<CustomSidebar> {
                     navItem('Faculty Wise Reports', Icons.bar_chart, () {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => const FacultyWiseReportsScreen()));
                     }),
-                    navItem('Course Outcome Wise Reports', Icons.timeline_outlined, () {}),
+                    navItem('Course Outcome Wise Reports', Icons.timeline_outlined, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const CourseOutcomeReportsScreen()));
+                    }),
                     navItem('Course Wise Reports', Icons.insert_chart_outlined, () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const CourseWiseReportsScreen())); // ✅ Linked here
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const CourseWiseReportsScreen()));
                     }),
                     navItem('Semester Wise Reports', Icons.date_range_outlined, () {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => const SemesterWiseReportScreen()));
                     }),
-                    navItem('Set Target Reports', Icons.flag_outlined, () {}),
+                    navItem('Set Target Reports', Icons.flag_outlined, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const SetTargetReportScreen())); // ✅ Added
+                    }),
                   ]),
                   buildSection('Budget Request', [
                     navItem('Expense Request', Icons.attach_money_outlined, () {}),

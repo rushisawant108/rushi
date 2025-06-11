@@ -77,7 +77,7 @@ class _CourseWiseReportsScreenState extends State<CourseWiseReportsScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+            icon: const Icon(Icons.picture_as_pdf, color: Colors.red),
             onPressed: _exportToPDF,
             tooltip: 'Export as PDF',
           ),
